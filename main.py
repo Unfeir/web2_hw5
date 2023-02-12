@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 import re
 
 import aiohttp
@@ -22,8 +22,6 @@ file = logging.FileHandler('logs.log')
 file.setLevel(logging.CRITICAL)
 file.setFormatter(formatter)
 logger.addHandler(file)
-
-
 
 logging.basicConfig(level=logging.INFO, handlers=[logging.FileHandler('logs.log'), logging.StreamHandler()])
 
@@ -62,9 +60,11 @@ async def get_exchange(urls, curr):
         res = await request(url)
         for el in res['exchangeRate']:
             if curr in el.values():
-                result.append(f"{res['date']}: {el['currency']} = Sale:{el.get('saleRate', el['saleRateNB'])} / Purchase:{el.get('purchaseRate', el['purchaseRateNB'])}")
+                result.append(
+                    f"{res['date']}: {el['currency']} = Sale:{el.get('saleRate', el['saleRateNB'])} / Purchase:{el.get('purchaseRate', el['purchaseRateNB'])}")
 
     return result
+
 
 async def parser(data):
     days = re.search(r'\d+', data)
@@ -75,6 +75,7 @@ async def parser(data):
     if cur:
         args['cur'] = cur.group()
     return args
+
 
 class Server:
     clients = set()

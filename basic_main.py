@@ -34,6 +34,7 @@ async def request(url):
                 logging.debug('take body')
                 if resp.status == 200:
                     data = await resp.json()
+                    logging.debug('body was taken')
                     return data
 
                 else:
