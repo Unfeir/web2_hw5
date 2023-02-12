@@ -22,17 +22,16 @@ def represent(request, currency):
         for el in request['exchangeRate']:
             if i in el.values():
                 result += f"{el['currency']} = Sale:{el.get('saleRate', el['saleRateNB'])} / Purchase:{el.get('purchaseRate', el['purchaseRateNB'])} \n"
-                # print(el.get('saleRate', el['saleRateNB']))
 
     return f'{result}-----------------------------------'
 
 
 async def request(url):
-    # print('request_f', url)
+    logging.debug(url)
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get(url) as resp:
-                logging.debug('request')
+                logging.debug('take body')
                 if resp.status == 200:
                     data = await resp.json()
                     return data
@@ -60,6 +59,7 @@ async def url_build(basicurl, days=1):
 
 
 async def main(requests):
+    logging.debug(requests)
     result = []
     async for req in requests:
         result.append(req)
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     basic_cur = ['EUR', 'USD']
     if curr:
         basic_cur.append(curr.upper())
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(format='%(asctime)s, %(lineno)d, %(funcName)s - %(message)s', level=logging.DEBUG)
     result = asyncio.run(main(url_build(basic_url, days)))
     for i in result:
         print(represent(i, basic_cur))
